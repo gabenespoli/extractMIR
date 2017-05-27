@@ -65,12 +65,12 @@ mirverbose(1); % stop mir toolbox from printing to the command window
 features = cellstr(features); % make sure input is a cell array
 while ~exist(folder,'dir'), 
     disp(['The folder ''',folder,''' doesn''t exist.'])
-    folder = input('Folder of audio files: '],'s');
+    folder = input('Folder of audio files: ','s');
 end
 filenames = getfilenames(folder,exts,'relative');
 
 if isempty(outputfile)
-    outputfile = input('Output filename (e.g., mir.csv): ','s')
+    outputfile = input('Output filename (e.g., mir.csv): ','s');
 end
 
 if exist(outputfile,'file')
