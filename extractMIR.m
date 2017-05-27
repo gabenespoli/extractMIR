@@ -83,7 +83,7 @@ while ~exist(folder,'dir'),
     disp(['The folder ''',folder,''' doesn''t exist.'])
     folder = input('Folder (e.g., ~/Music): ','s');
 end
-filenames = getfilenames(folder,filetypes,'relative');
+filenames = getFilenames(folder,filetypes,'relative');
 
 if isempty(outputfile)
     outputfile = input('Output filename (e.g., mir.csv): ','s');
