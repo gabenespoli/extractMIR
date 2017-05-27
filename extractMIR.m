@@ -122,7 +122,7 @@ for filename = filenames
     disp(['Processing file ',num2str(filenameInd),'/',num2str(length(filenames)),': ''',filename,''''])
     
     data = {filename,datestr(now,'yyyy-mm-dd HH:MM:SS')};
-    dataFormat = [getFeatureFormat('filename'),',',getFeatureFormat('dateExtracted')];
+    dataFormat = [getfeatureformat('filename'),',',getfeatureformat('dateExtracted')];
 
     % get filetype
     [~,~,filetype] = fileparts(filename);
@@ -196,7 +196,7 @@ for filename = filenames
         end
         
         data = [data,val];
-        dataFormat = [dataFormat,',',getFeatureFormat(featureName)];
+        dataFormat = [dataFormat,',',getfeatureformat(featureName)];
         
     end
     mywaitbar(w,-1);
