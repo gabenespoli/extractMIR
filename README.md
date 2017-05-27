@@ -12,3 +12,7 @@ extractMIR is a MATLAB script for calculating MIR (music information retrieval) 
 ## Octave Support
 
 Currently this is dependant on the MATLAB version of MIR Toolbox. It would be nice to use the [Octave implementation](https://github.com/martinarielhartmann/mirtooloct), but filtering doesn't work there which isn't ideal; for example, we can't calculate sub-band spectral flux without filtering.
+
+# TODO
+
+- Forget about calling ffmpeg from MATLAB. For some unknown reason this is too complicated of a task for MATLAB. We'll have to use the MATLAB functions `audioinfo`, `audioread`, and `audiowrite` to get metadata, and convert to a wav file if needed.
