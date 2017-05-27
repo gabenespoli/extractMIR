@@ -68,7 +68,7 @@ for i = 1:2:length(varargin)
     switch lower(varargin{i})
     case {'csvfile','outputfile'},  outputfile = varargin{i+1};
     case 'folder',                  folder = varargin{i+1};
-    case {'filetypes','filetypes'}, filetypes  = varargin{i+1};
+    case {'filetypes','exts'},      filetypes  = varargin{i+1};
     case 'mirtoolboxpath',          MIRtoolboxPath = varargin{i+1};
     case 'features',                features = varargin{i+1};
     end
@@ -159,9 +159,9 @@ for filename = filenames
     data = {filename,datestr(now,'yyyy-mm-dd HH:MM:SS')};
     dataFormat = [getFeatureFormat('filename'),',',getFeatureFormat('dateExtracted')];
 
-    % get filetype
-    [~,~,filetype] = fileparts(filename);
-    filetype = strrep(filetype,'.','');
+    % get file extension
+    [~,~,ext] = fileparts(filename);
+    ext = strrep(ext,'.','');
         
     % now that relative filename has been stored in the data variable and
     % the metadata has been pulled from the relative path, convert it to an
@@ -170,7 +170,7 @@ for filename = filenames
     
     %% get acoustic features
     % try to convert mp3 to wav to make sure mir reads it
-    if ismember(filetype,{'mp3','m4a'})
+    if ismember(ext,{'mp3','m4a'})
         disp('    Converting from mp3 to wav with ffmpeg...')
         [wavFilename,metadata] = ffmpeg_wrapper(filename,'.wav');
         haveTempFile = ~isempty(wavFilename);
@@ -218,7 +218,7 @@ for filename = filenames
             case 'eventdensity',val = mirgetdata(mireventdensity(a));
             case 'fluctuation', val = mean(mean(mirgetdata(mirfluctuation(a))));
             case 'lowenergy',   val = mirgetdata(mirlowenergy(a));
-            case 'filetype',    val = filetype;
+            case 'filetype',    val = ext;
 
                 % metadata
             case {'artist','album','title','track','genre','date'}
