@@ -4,22 +4,25 @@ function extractMIR(varargin)
 %   extractMIR('key1',val1,'key2',val2,...)
 %
 % input
-%   'mirtoolboxpath' = [string] Path to MIR Toolbox.
-%       Default '~/bin/matlab/MIRtoolbox1.6.1'
+%   'outputfile' = [string] Path and name of file to write data to.
+%       Usually csv. Default is to prompt the user for a filename.
 %
-%   'folder' = [string|cell of strings] Folder to search
-%       for files. All subfolders are searched. Default '~/Music'.
+%   'folder' = [string|cell of strings] Folder(s) to search
+%       for files. All subfolders are searched. Default 'Music'.
+%       If the folder doesn't exist, the user is prompted to enter one.
 %
 %   'exts' = [string|cell of strings] File extensions to search for
 %       in all folders specified in locs. Default {'mp3','m4a','wav','aiff'}.
-%
-%   'outputfile' = [string] Path and name of file to write data to.
-%       Usually csv. Default '' (will prompt to enter a filename).
 %
 %   'features' = [cell of strings|string] List of features to extract.
 %       Filter settings can be added to features like so:
 %       'feature_lowfreq_highfreq'. For e.g., 'flux_100_200' for spectral
 %       flux between 100 and 200 Hz. See subfunction parsefeature.
+%
+%   'mirtoolboxpath' = [cell of strings|string] Paths to search for 
+%       MIR Toolbox and add it to the MATLAB path. The first match is added.
+%       Default '{'~/Documents/MATLAB/MIRtoolbox1.6.1', 
+%       '~/bin/matlab/MIRtoolbox1.6.1'}.
 %
 % output
 %   A csv file with 'filename' as the first column, and each column
@@ -28,7 +31,7 @@ function extractMIR(varargin)
 % Written by Gabriel A. Nespoli 2017-04-04. Revised 2017-04-07.
 
 %% defaults
-addpaths = '~/bin/MATLAB/MIRtoolbox1.6.1';
+MIRtoolboxPath = {'~/Documents/MATLAB/MIRtoolbox1.6.1', '~/bin/matlab/MIRtoolbox1.6.1'};
 folder = 'Music';
 exts = {'mp3','m4a','wav','aiff'};
 outputfile = ''; % enter '' to not write to file
@@ -58,8 +61,16 @@ features = {...
     'lowenergy',...
     };
 
+%% user-defined
+for i = 1:2:length(varargin)
+    switch lower(varargin{i})
+    case 
+    end
+end
+
 %% prepare some things
-addpath(genpath(addpaths)) % add MIR toolbox to matlab's path
+addMIRtoolboxPath(MIRtoolboxPath)
+
 mirwaitbar(0); % turn off mir toolbox's waitbar
 mirverbose(1); % stop mir toolbox from printing to the command window
 features = cellstr(features); % make sure input is a cell array
