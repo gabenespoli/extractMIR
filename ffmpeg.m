@@ -5,16 +5,20 @@ function [outfile,metadata] = ffmpeg(infile,outfile)
 % if infile ext is same as outfile ext, returns same filename without doing any conversion
 % if conversion fails, returns the empty string ''
 
-% defaults
-if exist('/usr/local/bin/ffmpeg','file'), command = '/usr/local/bin/ffmpeg';
-elseif exist('/usr/bin/ffmpeg','file'), command = '/usr/bin/ffmpeg';
-else error('ffmpeg was not found on the system in /usr/local/bin/ or /usr/bin/.')
-end
+%% make sure ffmpeg is in the path
+% add paths https://www.mathworks.com/help/matlab/matlab_external/run-external-commands-scripts-and-programs.html
+`setenv('PATH', [getenv('PATH') ':/usr/local/bin'])`
+if ~isunix, error('This function will only work on unix.'), end
+[status,result] = system('which ffmpeg');
+if status, error('ffmpeg was not found on the system.'), end
+
+%% defaults
+command = 'ffmpeg';
 defaultOutext = '.wav';
 backupOutext = '.mp3'; % if infile is of type defaultOutext
 metadataLabels = {'artist','album','title','track','genre','date'};
 
-% parse input and output filenames
+%% parse input and output filenames
 [inpath,inname,inext] = fileparts(infile);
 if nargin > 1
     [outpath,outname,outext] = fileparts(outfile);
@@ -40,7 +44,7 @@ outfile = fullfile(outpath,[outname,outext]);
 outfileX = addEscapes(outfile);
 infileX = addEscapes(infile);
 
-% get metadata and read into struct
+%% get metadata and read into struct
 tempfile = 'temp.txt';
 metadata = [];
 [status,result] = system([command,' -i ',infileX,' -f ffmetadata ',tempfile]);
@@ -58,7 +62,7 @@ while ischar(tline)
     tline = fgetl(fid);
 end
 
-% convert file
+%% convert file
 if strcmp(infile,outfile)
     disp('In and out files have the same name. Returning same filename and aborting ffmpeg.m')
     outfile = infile;
