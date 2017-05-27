@@ -6,7 +6,10 @@ function [outfile,metadata] = ffmpeg(infile,outfile)
 % if conversion fails, returns the empty string ''
 
 % defaults
-command = '/usr/bin/ffmpeg';
+if exist('/usr/local/bin/ffmpeg','file'), command = '/usr/local/bin/ffmpeg';
+elseif exist('/usr/bin/ffmpeg','file'), command = '/usr/bin/ffmpeg';
+else error('ffmpeg was not found on the system in /usr/local/bin/ or /usr/bin/.'
+end
 defaultOutext = '.wav';
 backupOutext = '.mp3'; % if infile is of type defaultOutext
 metadataLabels = {'artist','album','title','track','genre','date'};
