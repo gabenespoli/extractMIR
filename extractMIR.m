@@ -77,7 +77,7 @@ end
 %% prepare some things
 addMIRtoolboxPath(MIRtoolboxPath)
 mirwaitbar(0); % turn off mir toolbox's waitbar
-mirverbose(1); % stop mir toolbox from printing to the command window
+mirverbose(0); % stop mir toolbox from printing to the command window
 features = cellstr(features); % make sure input is a cell array
 while ~exist(folder,'dir'), 
     disp(['The folder ''',folder,''' doesn''t exist.'])
