@@ -57,13 +57,13 @@ end
 
 % convert file
 if strcmp(infile,outfile)
-    warning('In and out files have the same name. Returning same filename and aborting ffmpeg.m')
+    disp('In and out files have the same name. Returning same filename and aborting ffmpeg.m')
     outfile = infile;
     return
 end
 
 if exist(outfile,'file')
-    warning('Outfile already exists. Aborting ffmpeg')
+    disp('Outfile already exists. Aborting ffmpeg')
     return
 end 
 
