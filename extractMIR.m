@@ -256,10 +256,11 @@ for filename = filenames
 end
 
 catch errorMsg % exit gracefully (close file)
-    disp('There was an error, attempting to exit gracefully...')
+    disp('*** Error in extractMIR ***')
+    fprintf('Closing csv file before exiting...')
     fclose(fid);
+    fprintf(' Done.\n')
     rethrow(errorMsg)
-    disp('Sucessfully exited gracefully.')
 end
 
 %% close output file
