@@ -8,7 +8,7 @@ function [outfile,metadata] = ffmpeg(infile,outfile)
 % defaults
 if exist('/usr/local/bin/ffmpeg','file'), command = '/usr/local/bin/ffmpeg';
 elseif exist('/usr/bin/ffmpeg','file'), command = '/usr/bin/ffmpeg';
-else error('ffmpeg was not found on the system in /usr/local/bin/ or /usr/bin/.'
+else error('ffmpeg was not found on the system in /usr/local/bin/ or /usr/bin/.')
 end
 defaultOutext = '.wav';
 backupOutext = '.mp3'; % if infile is of type defaultOutext
