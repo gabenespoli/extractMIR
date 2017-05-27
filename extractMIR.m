@@ -136,7 +136,7 @@ else
 end
     
 if makeNewFile
-    disp('Creating output file ''',outputfile,'''...')
+    disp(['Creating output file ''',outputfile,'''...'])
     % open new file and write header row
     fid = fopen(outputfile,'wt');
     header = {'filename','dateExtracted',features{:}};
