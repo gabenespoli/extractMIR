@@ -27,11 +27,6 @@ function extractMIR(varargin)
 %
 % Written by Gabriel A. Nespoli 2017-04-04. Revised 2017-04-07.
 
-if nargin == 0
-    overwriteExisting = false;
-else overwriteExisting = true;
-end
-
 %% defaults
 addpaths = '~/bin/MATLAB/MIRtoolbox1.6.1';
 %folder = '~/Music/Music/'; % enter '.' for current dir
@@ -73,18 +68,18 @@ features = cellstr(features); % make sure input is a cell array
 if ~exist(folder,'dir'), error('Folder doesn''t exist.'), end
 filenames = getfilenames(folder,exts,'relative');
 
-if exist(outputfile,'file') && ~overwriteExisting
-    resp = input('Warning: Output file already exists. Continue? [y]/n: ','s');
+if exist(outputfile,'file')
+    resp = input(['Output file already exists. This file will be backed up to ''',outputfile,'.bak',''' and then modified to include data from new audio files. If ''',outputfile,'.bak',''' exists it will be overwritten. Continue? [y]/n: '],'s');
     if strcmpi(resp,'n'), disp('Aborting...'), return, end
-     try
-         completed = readtable(outputfile);
-         header = completed.Properties.VariableNames;
-         completedFilenames = completed.filename;
-     catch
+    [status,result] = system('cp ',outputfile,' ',outputfile,'.bak');
+    try
+        completed = readtable(outputfile);
+        header = completed.Properties.VariableNames;
+        completedFilenames = completed.filename;
+    catch
         [header,data] = readtable_fallback(outputfile);
         completedFilenames = data{ismember(header,'filename')};
-
-     end
+    end
 
      % must extract same features as file
      features = header(3:end);
