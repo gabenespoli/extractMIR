@@ -169,27 +169,25 @@ for filename = filenames
     filename = fullfile(folder,filename);
     
     %% get acoustic features
-    % try to convert mp3 to wav to make sure mir reads it
+    % pass filename to ffmpeg.m
+    % it will convert to wav if it's not wav, and extract metadata
     if ~strcmpi(ext,'wav')
-        disp(['Converting from ',ext,' to wav with ffmpeg...'])
-        [wavFilename,metadata] = ffmpeg_wrapper(filename,'.wav');
-        haveTempFile = ~isempty(wavFilename);
-        if haveTempFile
-            tempFilename = filename;
-            filename = wavFilename;
-        end
+        disp(['Converting from ',ext,' to wav and extracting metdata with ffmpeg...'])
+        haveTempFile = true;
     else
+        disp('Extracting metadata with ffmpeg...')
         haveTempFile = false;
     end
+    % if file is already wav, ffmpeg.m returns the same filename
+    [filename,metadata] = ffmpeg(filename,'.wav'); 
 
-    disp('    Loading file into MIR Toolbox...')
+    disp('Loading file into MIR Toolbox...')
     a = miraudio(filename); % load current file
     Fs = get(a,'Sampling'); % get sampling rate
     Fs = Fs{1}; % convert from cell to numeric
     
-    if haveTempFile
-        status = system(['rm ',strrep(wavFilename,' ','\ ')]);
-        filename = tempFilename;
+    if haveTempFile % remove temp wavfile if original file was not wav
+        status = system(['rm ',strrep(filename,' ','\ ')]);
     end
         
     w = mywaitbar('    Extracting features...');
@@ -224,7 +222,7 @@ for filename = filenames
 
                 % metadata
             case {'artist','album','title','track','genre','date'}
-                if exist('metadata','var') && isfield(metadata,featureName)
+                if isfield(metadata,featureName)
                     val = {metadata.(featureName)};
                 else val = {''};
                 end
