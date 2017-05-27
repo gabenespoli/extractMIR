@@ -14,7 +14,7 @@ function extractMIR(varargin)
 %       in all folders specified in locs. Default {'mp3','m4a','wav','aiff'}.
 %
 %   'outputfile' = [string] Path and name of file to write data to.
-%       Usually csv. Default '~/Music/mir.csv'.
+%       Usually csv. Default '' (will prompt to enter a filename).
 %
 %   'features' = [cell of strings|string] List of features to extract.
 %       Filter settings can be added to features like so:
@@ -29,11 +29,9 @@ function extractMIR(varargin)
 
 %% defaults
 addpaths = '~/bin/MATLAB/MIRtoolbox1.6.1';
-%folder = '~/Music/Music/'; % enter '.' for current dir
-%folder = '/Volumes/EGDRIVE1/Music'; % enter '.' for current dir
 folder = 'Music';
 exts = {'mp3','m4a','wav','aiff'};
-outputfile = 'mir.csv'; % enter '' to not write to file
+outputfile = ''; % enter '' to not write to file
 saveFrequency = 1; % save every x number of files
 features = {...
     'filetype',...
@@ -70,6 +68,10 @@ while ~exist(folder,'dir'),
         'Enter a valid folder or leave blank to abort: ','s']);
 end
 filenames = getfilenames(folder,exts,'relative');
+
+if isempty(outputfile)
+    outputfile = input('Output filename (e.g., mir.csv): ','s')
+end
 
 if exist(outputfile,'file')
     resp = input(['Output file already exists. This file will be backed up to ''',...
