@@ -7,7 +7,7 @@ function [outfile,metadata] = ffmpeg(infile,outfile)
 
 %% make sure ffmpeg is in the path
 % add paths https://www.mathworks.com/help/matlab/matlab_external/run-external-commands-scripts-and-programs.html
-`setenv('PATH', [getenv('PATH') ':/usr/local/bin'])`
+setenv('PATH', [getenv('PATH') ':/usr/local/bin'])
 if ~isunix, error('This function will only work on unix.'), end
 [status,result] = system('which ffmpeg');
 if status, error('ffmpeg was not found on the system.'), end
