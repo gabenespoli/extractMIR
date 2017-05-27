@@ -4,14 +4,14 @@ function extractMIR(varargin)
 %   extractMIR('key1',val1,'key2',val2,...)
 %
 % input
-%   'outputfile' = [string] Path and name of file to write data to.
-%       Usually csv. Default is to prompt the user for a filename.
+%   'csvfile' = [string] Path and name of csv file to write data to.
+%       Default is to prompt the user for a filename.
 %
 %   'folder' = [string|cell of strings] Folder(s) to search
 %       for files. All subfolders are searched. Default 'Music'.
 %       If the folder doesn't exist, the user is prompted to enter one.
 %
-%   'exts' = [string|cell of strings] File extensions to search for
+%   'filetypes' = [string|cell of strings] File extensions to search for
 %       in all folders specified in locs. Default {'mp3','m4a','wav','aiff'}.
 %
 %   'features' = [cell of strings|string] List of features to extract.
@@ -30,11 +30,13 @@ function extractMIR(varargin)
 %
 % Written by Gabriel A. Nespoli 2017-04-04. Revised 2017-04-07.
 
+% TODO add parameter 'addfeatures' that adds certain features to an existing csv file
+
 %% defaults
-MIRtoolboxPath = {'~/Documents/MATLAB/MIRtoolbox1.6.1', '~/bin/matlab/MIRtoolbox1.6.1'};
 folder = 'Music';
-exts = {'mp3','m4a','wav','aiff'};
 outputfile = ''; % enter '' to not write to file
+filetypes = {'mp3','m4a','wav','aiff'};
+MIRtoolboxPath = {'~/Documents/MATLAB/MIRtoolbox1.6.1', '~/bin/matlab/MIRtoolbox1.6.1'};
 saveFrequency = 1; % save every x number of files
 features = {...
     'filetype',...
@@ -64,13 +66,16 @@ features = {...
 %% user-defined
 for i = 1:2:length(varargin)
     switch lower(varargin{i})
-    case 
+    case {'csvfile','outputfile'},  outputfile = varargin{i+1};
+    case 'folder',                  folder = varargin{i+1};
+    case {'filetypes','filetypes'}, filetypes  = varargin{i+1};
+    case 'mirtoolboxpath',          MIRtoolboxPath = varargin{i+1};
+    case 'features',                features = varargin{i+1};
     end
 end
 
 %% prepare some things
 addMIRtoolboxPath(MIRtoolboxPath)
-
 mirwaitbar(0); % turn off mir toolbox's waitbar
 mirverbose(1); % stop mir toolbox from printing to the command window
 features = cellstr(features); % make sure input is a cell array
@@ -78,7 +83,7 @@ while ~exist(folder,'dir'),
     disp(['The folder ''',folder,''' doesn''t exist.'])
     folder = input('Folder of audio files: ','s');
 end
-filenames = getfilenames(folder,exts,'relative');
+filenames = getfilenames(folder,filetypes,'relative');
 
 if isempty(outputfile)
     outputfile = input('Output filename (e.g., mir.csv): ','s');
@@ -242,4 +247,14 @@ end
 fclose(fid);
 disp(['Extracted features from ',num2str(length(files)),' file(s).'])
 
+end
+
+function addMIRtoolboxPath(MIRtoolboxPath)
+MIRtoolboxPath = cellstr(MIRtoolboxPath);
+for i = 1:length(MIRtoolboxPath)
+    if exist(MIRtoolboxPath{i}, 'dir')
+        addpath(genpath(MIRtoolboxPath{i}))
+        return
+    end
+end
 end
