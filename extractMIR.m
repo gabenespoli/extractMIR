@@ -69,7 +69,9 @@ if ~exist(folder,'dir'), error('Folder doesn''t exist.'), end
 filenames = getfilenames(folder,exts,'relative');
 
 if exist(outputfile,'file')
-    resp = input(['Output file already exists. This file will be backed up to ''',outputfile,'.bak',''' and then modified to include data from new audio files. If ''',outputfile,'.bak',''' exists it will be overwritten. Continue? [y]/n: '],'s');
+    resp = input(['Output file already exists. This file will be backed up to ''',...
+        outputfile,'.bak',''' and then modified to include data from new audio files. If ''',...
+        outputfile,'.bak',''' exists it will be overwritten. Continue? [y]/n: '],'s');
     if strcmpi(resp,'n'), disp('Aborting...'), return, end
     [status,result] = system('cp ',outputfile,' ',outputfile,'.bak');
     try
