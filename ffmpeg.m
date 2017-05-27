@@ -1,11 +1,9 @@
-FUNCTION [outfile,metadata] = ffmpeg_wrapper(infile,outfile)
+function [outfile,metadata] = ffmpeg(infile,outfile)
 % wrapper for commanline function ffmpeg
 % if no outfile given, assumed same dir and wav file (if infile is wav, then mp3)
 % if successfully converts, returns the path/filename to a wav file
 % otherwise returns the empty string
 % also outputs a boolean whether the conversion was successful
-
-% ** this file needs some work **
 
 % defaults
 command = '/usr/bin/ffmpeg';
@@ -44,9 +42,10 @@ tempfile = 'temp.txt';
 metadata = [];
 [status,result] = system([command,' -i ',infileX,' -f ffmetadata ',tempfile]);
 if status
-    warning('Failed metadata extraction with ffmpeg_wrapper.m')
+    warning('Failed metadata extraction with ffmpeg')
     disp(result)
 end
+%[~,result] = system('cat temp.txt')
 fid = fopen(tempfile,'rt');
 tline = fgetl(fid);
 while ischar(tline)
@@ -58,20 +57,20 @@ end
 
 % convert file
 if strcmp(infile,outfile)
-    warning('In and out files have the same name. Aborting ffmpeg_wrapper.m')
-    outfile = '';
+    warning('In and out files have the same name. Returning same filename and aborting ffmpeg.m')
+    outfile = infile;
     return
 end
 
 if exist(outfile,'file')
-    warning('Outfile already exists. Aborting ffmpeg_wrapper.m')
+    warning('Outfile already exists. Aborting ffmpeg')
     return
 end 
 
 [status,result] = system([command,' -i ',infileX,' ',outfileX]);
 if status
     outfile = '';
-    warning('Failed conversion with ffmpeg_wrapper.m')
+    warning('Failed conversion with ffmpeg')
     disp(result)
 end
 end
