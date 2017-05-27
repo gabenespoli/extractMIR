@@ -44,7 +44,7 @@ tempfile = 'temp.txt';
 metadata = [];
 [status,result] = system([command,' -i ',infileX,' -f ffmetadata ',tempfile]);
 if status
-    warning('Failed metadata extraction with avconv.m.')
+    warning('Failed metadata extraction with ffmpeg_wrapper.m')
     disp(result)
 end
 fid = fopen(tempfile,'rt');
@@ -58,20 +58,20 @@ end
 
 % convert file
 if strcmp(infile,outfile)
-    warning('In and out files have the same name. Aborting avconv.m.')
+    warning('In and out files have the same name. Aborting ffmpeg_wrapper.m')
     outfile = '';
     return
 end
 
 if exist(outfile,'file')
-    warning('Outfile already exists. Aborting avconv.m.')
+    warning('Outfile already exists. Aborting ffmpeg_wrapper.m')
     return
 end 
 
 [status,result] = system([command,' -i ',infileX,' ',outfileX]);
 if status
     outfile = '';
-    warning('Failed conversion with avconv.m.')
+    warning('Failed conversion with ffmpeg_wrapper.m')
     disp(result)
 end
 end

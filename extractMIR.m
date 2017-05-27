@@ -224,7 +224,7 @@ for filename = filenames
 
                 % metadata
             case {'artist','album','title','track','genre','date'}
-                if isfield(metadata,featureName)
+                if exist('metadata','var') && isfield(metadata,featureName)
                     val = {metadata.(featureName)};
                 else val = {''};
                 end
