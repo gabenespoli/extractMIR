@@ -2,8 +2,8 @@ function [outfile,metadata] = ffmpeg(infile,outfile)
 % wrapper for commanline function ffmpeg
 % if no outfile given, assumed same dir and wav file (if infile is wav, then mp3)
 % if successfully converts, returns the path/filename to a wav file
-% otherwise returns the empty string
-% also outputs a boolean whether the conversion was successful
+% if infile ext is same as outfile ext, returns same filename without doing any conversion
+% if conversion fails, returns the empty string ''
 
 % defaults
 command = '/usr/bin/ffmpeg';
@@ -42,7 +42,7 @@ tempfile = 'temp.txt';
 metadata = [];
 [status,result] = system([command,' -i ',infileX,' -f ffmetadata ',tempfile]);
 if status
-    warning('Failed metadata extraction with ffmpeg')
+    disp('*** Failed metadata extraction with ffmpeg. ***')
     disp(result)
 end
 %[~,result] = system('cat temp.txt')
