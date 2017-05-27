@@ -1,4 +1,4 @@
-function [outfile,metadata] = ffmpeg_wrapper(infile,outfile)
+FUNCTION [outfile,metadata] = ffmpeg_wrapper(infile,outfile)
 % wrapper for commanline function ffmpeg
 % if no outfile given, assumed same dir and wav file (if infile is wav, then mp3)
 % if successfully converts, returns the path/filename to a wav file
@@ -24,7 +24,7 @@ else
 end
 if isempty(outpath)
     outpath = inpath; end
-if ~exist(outpath,'dir')
+if ~exist(outpath,'dir') && ~isempty(outpath)
     mkdir(outpath); end
 if isempty(outname)
     outname = inname; end
