@@ -90,34 +90,53 @@ if isempty(outputfile)
 end
 
 if exist(outputfile,'file')
-    resp = input(['Output file already exists. This file will be backed up to ''',...
-        outputfile,'.bak',''' and then modified to include data from new audio files. If ''',...
-        outputfile,'.bak',''' exists it will be overwritten. Continue? [y]/n: '],'s');
-    if strcmpi(resp,'n'), disp('Aborting...'), return, end
-    [status,result] = system('cp ',outputfile,' ',outputfile,'.bak');
-    try
-        completed = readtable(outputfile);
-        header = completed.Properties.VariableNames;
-        completedFilenames = completed.filename;
-    catch
-        [header,data] = readtable_fallback(outputfile);
-        completedFilenames = data{ismember(header,'filename')};
+    resp = input(['File ''',outputfile,''' already exists. [a]ppend, [o]verwrite, or [c]ancel: '],'s');
+
+    if ismember(lower(resp), {'a','o'}) % backup file before modifying it
+        disp(['Backing up ''',outputfile,''' to ''',outputfile,'.bak','''...'])
+        [status,result] = system(['cp ',outputfile,' ',outputfile,'.bak']);
     end
 
-     % must extract same features as file
-     features = header(3:end);
-    
-    % remove filenames that have already been completed
-    if ~isempty(completedFilenames)
-        filenames = filenames(~ismember(filenames,completedFilenames));
+    switch lower(resp)
+    case 'a'
+        makeNewFile = false;
+        try
+            completed = readtable(outputfile);
+            header = completed.Properties.VariableNames;
+            completedFilenames = completed.filename;
+        catch
+            [header,data] = readtable_fallback(outputfile);
+            completedFilenames = data{ismember(header,'filename')};
+        end
+
+         % must extract same features as file
+         features = header(3:end);
+        
+        % remove filenames that have already been completed
+        if ~isempty(completedFilenames)
+            filenames = filenames(~ismember(filenames,completedFilenames));
+        end
+        
+        % open file for appending text
+        % open as text file ('t') to deal with newlines on different systems
+        fid = fopen(outputfile,'at');
+
+    case 'o'
+        makeNewFile = true;
+
+    otherwise
+        disp('Invalid entry. Aborting...')
+        return
+
     end
+
+else 
+    makeNewFile = true;
+
+end
     
-    % open file for appending text
-    % open as text file ('t') to deal with newlines on different systems
-    fid = fopen(outputfile,'at');
-    
-else
-    disp('Ouput file doesn''t exist. Creating...')
+if makeNewFile
+    disp('Creating output file ''',outputfile,'''...')
     % open new file and write header row
     fid = fopen(outputfile,'wt');
     header = {'filename','dateExtracted',features{:}};
