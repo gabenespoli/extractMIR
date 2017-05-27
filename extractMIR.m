@@ -1,5 +1,5 @@
 function extractMIR(varargin)
-%EM_MIR  Extract features from wav files.
+%extractMIR  Extract features from wav files.
 % usage
 %   extractMIR('key1',val1,'key2',val2,...)
 %
@@ -36,7 +36,7 @@ end
 addpaths = '~/bin/MATLAB/MIRtoolbox1.6.1';
 %folder = '~/Music/Music/'; % enter '.' for current dir
 %folder = '/Volumes/EGDRIVE1/Music'; % enter '.' for current dir
-folder = '/media/egdata/Media/Music';
+folder = 'Music';
 exts = {'mp3','m4a','wav','aiff'};
 outputfile = 'mir.csv'; % enter '' to not write to file
 saveFrequency = 1; % save every x number of files
@@ -73,7 +73,8 @@ features = cellstr(features); % make sure input is a cell array
 filenames = getfilenames(folder,exts,'relative');
 
 if exist(outputfile,'file') && ~overwriteExisting
-    disp('Output file already exists. Reading data first...')
+    resp = input('Warning: Output file already exists. Continue? [y]/n: ','s');
+    if strcmpi(resp,'n'), disp('Aborting...'), return, end
      try
          completed = readtable(outputfile);
          header = completed.Properties.VariableNames;
