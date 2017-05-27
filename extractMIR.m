@@ -70,6 +70,7 @@ addpath(genpath(addpaths)) % add MIR toolbox to matlab's path
 mirwaitbar(0); % turn off mir toolbox's waitbar
 mirverbose(1); % stop mir toolbox from printing to the command window
 features = cellstr(features); % make sure input is a cell array
+if ~exist(folder,'dir'), error('Folder doesn''t exist.'), end
 filenames = getfilenames(folder,exts,'relative');
 
 if exist(outputfile,'file') && ~overwriteExisting
