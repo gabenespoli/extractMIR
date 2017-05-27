@@ -170,14 +170,16 @@ for filename = filenames
     
     %% get acoustic features
     % try to convert mp3 to wav to make sure mir reads it
-    if ismember(ext,{'mp3','m4a'})
-        disp('    Converting from mp3 to wav with ffmpeg...')
+    if ~strcmpi(ext,'wav')
+        disp(['Converting from ',ext,' to wav with ffmpeg...'])
         [wavFilename,metadata] = ffmpeg_wrapper(filename,'.wav');
         haveTempFile = ~isempty(wavFilename);
         if haveTempFile
             tempFilename = filename;
             filename = wavFilename;
         end
+    else
+        haveTempFile = false;
     end
 
     disp('    Loading file into MIR Toolbox...')
