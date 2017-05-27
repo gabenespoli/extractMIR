@@ -197,7 +197,7 @@ for filename = filenames
         
         featureInd = find(ismember(features,feature));
         feature = feature{1}; % make string instead of cell
-        [featureName,f] = parsefeature(feature,Fs); % get feature settings from name
+        [featureName,f] = parseFeature(feature,Fs); % get feature settings from name
         if ~isempty(f) % filter
             if mirverbose
                 w = mywaitbar(w,featureInd/length(features),'filtering\n');
