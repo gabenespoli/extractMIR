@@ -64,8 +64,8 @@ mirwaitbar(0); % turn off mir toolbox's waitbar
 mirverbose(1); % stop mir toolbox from printing to the command window
 features = cellstr(features); % make sure input is a cell array
 while ~exist(folder,'dir'), 
-    folder = input(['The folder ''',folder,''' doesn''t exist.',...
-        'Enter a valid folder or leave blank to abort: ','s']);
+    disp(['The folder ''',folder,''' doesn''t exist.'])
+    folder = input('Folder of audio files: '],'s');
 end
 filenames = getfilenames(folder,exts,'relative');
 
