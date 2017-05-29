@@ -16,6 +16,7 @@ temp = regexp(result,'(\s+:\s+)|(\n)','split');
 if mod(length(temp),2), temp(end) = []; end
 
 % convert the key/value cell array to a struct
+% all fields are of type string since this is what stdout is
 metadata = struct;
 for i = 1:2:length(temp)
     metadata.(matlab.lang.makeValidName(temp{i})) = temp{i+1};
