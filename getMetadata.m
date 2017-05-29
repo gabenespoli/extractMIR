@@ -6,7 +6,9 @@ if system('which exiftool')
 end
 
 % make system call to command line utility exiftool
-[status,result] = system(['exiftool',' ',addEscapes(filename)]);
+filename = ['"', strrep(filename,'"','\"'), '"']; % prepare filename for shell
+[status,result] = system(['exiftool ',filename]);
+
 
 % use regex to split the output by colons-surrounded-by-whitespace and newlines
 % this essentially parses the stdout into a 1-by-n cell array of key/value pairs
