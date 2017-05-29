@@ -152,34 +152,34 @@ try
 for filename = filenames
     tic
     
+    % looping admin
     filenameInd = find(ismember(filenames,filename)); % get loop iteration
     filename = filename{1}; % make current filename a string instead of a cell
     disp(['Processing file ',num2str(filenameInd),'/',num2str(length(filenames)),': ''',filename,''''])
     
-    data = {filename,datestr(now,'yyyy-mm-dd HH:MM:SS')};
-    dataFormat = [getFeatureFormat('filename'),',',getFeatureFormat('dateExtracted')];
+    % data and dataFormat will be used later with fprintf to write the csvfile
+    data = {filename, datestr(now,'yyyy-mm-dd HH:MM:SS')};
+    dataFormat = ['"%s","%s"'];
 
-    % get file extension
-    [~,~,ext] = fileparts(filename);
-    ext = strrep(ext,'.','');
-        
     % now that relative filename has been stored in the data variable and
     % the metadata has been pulled from the relative path, convert it to an
     % absolute path so we can actually find the file for loading
     filename = fullfile(folder,filename);
+    [pathstr,name,ext] = fileparts(filename);
     
+    %% get metadata
+    metadata = getMetadata(filename);
+
     %% get acoustic features
-    % pass filename to ffmpeg.m
-    % it will convert to wav if it's not wav, and extract metadata
-    if ~strcmpi(ext,'wav')
-        disp(['Converting from ',ext,' to wav and extracting metdata with ffmpeg...'])
+    % make sure we have a wav file
+    if ~strcmpi(ext,'.wav')
+        disp(['Converting from ',ext,' to .wav...'])
         haveTempFile = true;
     else
-        disp('Extracting metadata with ffmpeg...')
         haveTempFile = false;
     end
-    % if file is already wav, ffmpeg.m returns the same filename
-    [filename,metadata] = ffmpeg(filename,'.wav'); 
+
+
 
     disp('Loading file into MIR Toolbox...')
     a = miraudio(filename); % load current file
@@ -218,7 +218,6 @@ for filename = filenames
             case 'eventdensity',val = mirgetdata(mireventdensity(a));
             case 'fluctuation', val = mean(mean(mirgetdata(mirfluctuation(a))));
             case 'lowenergy',   val = mirgetdata(mirlowenergy(a));
-            case 'filetype',    val = ext;
 
                 % metadata
             case {'artist','album','title','track','genre','date'}
