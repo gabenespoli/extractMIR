@@ -171,25 +171,12 @@ for filename = filenames
     metadata = getMetadata(filename);
 
     %% get acoustic features
-    % make sure we have a wav file
-    if ~strcmpi(ext,'.wav')
-        disp(['Converting from ',ext,' to .wav...'])
-        haveTempFile = true;
-    else
-        haveTempFile = false;
-    end
-
-
-
+    % read the audiofile with builtin instead of miraudio
     disp('Loading file into MIR Toolbox...')
-    a = miraudio(filename); % load current file
+    a = miraudio(filename); % load file into an MIR Toolbox object
     Fs = get(a,'Sampling'); % get sampling rate
     Fs = Fs{1}; % convert from cell to numeric
     
-    if haveTempFile % remove temp wavfile if original file was not wav
-        status = system(['rm ',strrep(filename,' ','\ ')]);
-    end
-        
     w = mywaitbar('    Extracting features...');
     for feature = features
         
