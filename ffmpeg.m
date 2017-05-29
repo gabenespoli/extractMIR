@@ -82,25 +82,3 @@ if status
 end
 end
 
-function file = addEscapes(file)
-file = strrep(file,' ','\ ');
-file = strrep(file,'-','\-');
-file = strrep(file,'(','\(');
-file = strrep(file,')','\)');
-file = strrep(file,']','\]');
-file = strrep(file,'[','\[');
-file = strrep(file,'{','\{');
-file = strrep(file,'}','\}');
-file = strrep(file,'&','\&');
-file = strrep(file,'''','\''');
-file = strrep(file,'"','\"');
-file = strrep(file,'.','\.');
-file = strrep(file,'*','\*');
-file = strrep(file,'?','\?');
-file = strrep(file,';','\;');
-file = strrep(file,'<','\<');
-file = strrep(file,'>','\>');
-file = strrep(file,'#','\#');
-file = strrep(file,'!','\!');
-end
-
