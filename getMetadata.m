@@ -10,7 +10,7 @@ end
 
 % use regex to split the output by colons-surrounded-by-whitespace and newlines
 % this essentially parses the stdout into a 1-by-n cell array of key/value pairs
-temp = regexp(result,'(\s+:\s+)|(\n)','split');
+temp = regexp(result,'(\s+:\s)|(\n)','split');
 
 % often there is a trailing newline messing up key/value pair structure; get rid of it
 if mod(length(temp),2), temp(end) = []; end
