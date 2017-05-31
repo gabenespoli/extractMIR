@@ -31,6 +31,7 @@ function extractMIR(varargin)
 % Written by Gabriel A. Nespoli 2017-04-04. Revised 2017-04-07.
 
 % TODO add parameter 'addfeatures' that adds certain features to an existing csv file
+% TODO make a subfunction to combine the current song's data with the master list. this is needed because exiftool extracts different kinds of metadata for different filetypes (wav, mp3, m4a)
 
 %% defaults
 folder = 'Music';
@@ -39,6 +40,15 @@ filetypes = {'mp3','m4a','wav','aiff'};
 MIRtoolboxPath = {'~/Documents/MATLAB/MIRtoolbox1.6.1', '~/bin/matlab/MIRtoolbox1.6.1'};
 saveFrequency = 1; % save every x number of files
 features = {...
+    'FileType',...
+    'SampleRate',...
+    'Title',...
+    'Artist',...
+    'Composer',...
+    'Album',...
+    'Year',...
+    'Genre',...
+    'Duration',...
     'rms',...
     'rmsStd',...
     'flux',...
@@ -159,7 +169,7 @@ for filename = filenames
     % absolute path so we can actually find the file for loading
     filename = fullfile(folder,filename);
     [pathstr,name,ext] = fileparts(filename);
-    
+
     %% get metadata
     disp('Extracting metadata...')
     metadata = getMetadata(filename);
@@ -169,10 +179,11 @@ for filename = filenames
     a = miraudio(filename); 
     Fs = get(a,'Sampling'); % get sampling rate
     Fs = Fs{1}; % convert from cell to numeric
-    
+
+    %% loop features
     w = mywaitbar('Extracting features...');
     for feature = features
-        
+
         featureInd = find(ismember(features,feature));
         feature = feature{1}; % make string instead of cell
         [featureName,f] = parseFeature(feature,Fs); % get feature settings from name
@@ -183,7 +194,7 @@ for filename = filenames
             end
             a = mirfilterbank(a,'Manual',f);
         end
-        
+
         if mirverbose
             w = mywaitbar(w,featureInd/length(features),[feature,'\n']);
         else w = mywaitbar(w,featureInd/length(features),feature);
@@ -200,42 +211,42 @@ for filename = filenames
             case 'lowenergy',   val = mirgetdata(mirlowenergy(a));
 
                 % metadata
-            case {'artist','album','title','track','genre','date'}
+            otherwise
                 if isfield(metadata,featureName)
                     val = {metadata.(featureName)};
                 else val = {''};
                 end
-                
-            otherwise, error(['Unknown feature ''',feature,'''.'])
+
         end
-        
+
         data = [data,val];
         dataFormat = [dataFormat,',',getFeatureFormat(featureName)];
-        
+
     end
     mywaitbar(w,-1);
-    
+
     % print data to file
     fprintf(fid,[dataFormat,'\n'],data{:});
-    
+
     % save progress every so often
     if mod(featureInd,saveFrequency) == 0
         progress = featureInd / length(filenames);
         w = mywaitbar('    Saving progress...',progress,'Closing file...');
         fclose(fid);
         clear a
-        
+
         w = mywaitbar(w,progress,'Reopening file...');
         fid = fopen(outputfile,'at');
-        
+
         mywaitbar(w,-1);
     end
-    
+
     toc
 end
 
 catch errorMsg % exit gracefully (close file)
-    disp('*** Error in extractMIR ***')
+    fprintf('\n')
+    fprintf('*** Error in extractMIR ***\n')
     fprintf('Closing csv file before exiting...')
     fclose(fid);
     fprintf(' Done.\n')
