@@ -158,7 +158,7 @@ for filename = filenames
     % looping admin
     filenameInd = find(ismember(filenames,filename)); % get loop iteration
     filename = filename{1}; % make current filename a string instead of a cell
-    disp(['Processing file ',num2str(filenameInd),'/',num2str(length(filenames)),': ''',filename,''''])
+    fprintf('\nProcessing file %i/%i: %s\n', filenameInd, length(filenames), filename)
     
     % data and dataFormat will be used later with fprintf to write the csvfile
     data = {filename, datestr(now,'yyyy-mm-dd HH:MM:SS')};
@@ -229,9 +229,9 @@ for filename = filenames
     fprintf(fid,[dataFormat,'\n'],data{:});
 
     % save progress every so often
-    if mod(featureInd,saveFrequency) == 0
-        progress = featureInd / length(filenames);
-        w = mywaitbar('    Saving progress...',progress,'Closing file...');
+    if mod(filenameInd,saveFrequency) == 0
+        progress = filenameInd / length(filenames);
+        w = mywaitbar('Saving progress...',progress,'Closing file...');
         fclose(fid);
         clear a
 
@@ -256,6 +256,7 @@ end
 %% close output file
 fclose(fid);
 disp(['Extracted features from ',num2str(length(files)),' file(s).'])
+fprintf('Extracted features from %i file(s).', length(filenames))
 
 end
 
