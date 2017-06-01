@@ -1,7 +1,8 @@
 function metadata = getMetadata(filename)
 
 % make sure exiftool exists on the system
-if system('which exiftool')
+[status,result] = system('which exiftool');
+if status
     error('The command line program exiftool does not exist on the system.')
 end
 
