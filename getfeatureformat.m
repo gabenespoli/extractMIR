@@ -1,4 +1,4 @@
-function featureFormat = getfeatureformat(feature)
+function featureFormat = getFeatureFormat(feature)
 featureName = parseFeature(feature);
 featureFormat = '%16.12f';
 stringFeatures = {...

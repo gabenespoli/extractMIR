@@ -1,4 +1,4 @@
-function filenames = getfilenames(locs,exts,pathtype,ignoredotfiles)
+function filenames = getFilenames(locs,exts,pathtype,ignoredotfiles)
 % getfilenames  Recursively search dirs for files of a certain type.
 %
 % USAGE

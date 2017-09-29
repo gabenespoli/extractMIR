@@ -1,4 +1,4 @@
-function [feature,f] = parsefeature(feature,Fs)
+function [feature,f] = parseFeature(feature,Fs)
 % parse a feature name that has filter cutoffs included
 % this is specified in the form "feature_locut_hicut"
 
