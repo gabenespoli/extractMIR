@@ -1,34 +1,35 @@
 function extractMIR(varargin)
 %extractMIR  Extract features from wav files.
-% usage
-%   extractMIR('key1',val1,'key2',val2,...)
+% usage:
+%   extractMIR(csvfile, folder, 'key', val, ...)
 %
-% input
-%   'csvfile' = [string] Path and name of csv file to write data to.
+% input (required):
+%   csvfile = [string] Path and name of csv file to write data to.
 %       Default is to prompt the user for a filename.
 %
-%   'folder' = [string|cell of strings] Folder(s) to search
+%   folder = [string|cell of strings] Folder(s) to search
 %       for files. All subfolders are searched. Default 'Music'.
 %       If the folder doesn't exist, the user is prompted to enter one.
 %
-%   'filetypes' = [string|cell of strings] File extensions to search for
-%       in all folders specified in locs. Default {'mp3','m4a','wav','aiff'}.
-%
+% input (optional):
 %   'features' = [cell of strings|string] List of features to extract.
 %       Filter settings can be added to features like so:
 %       'feature_lowfreq_highfreq'. For e.g., 'flux_100_200' for spectral
 %       flux between 100 and 200 Hz. See subfunction parsefeature.
+%
+%   'filetypes' = [string|cell of strings] File extensions to search for
+%       in all folders specified in locs. Default {'mp3','m4a','wav','aiff'}.
 %
 %   'mirtoolboxpath' = [cell of strings|string] Paths to search for 
 %       MIR Toolbox and add it to the MATLAB path. The first match is added.
 %       Default '{'~/Documents/MATLAB/MIRtoolbox1.6.1', 
 %       '~/bin/matlab/MIRtoolbox1.6.1'}.
 %
-% output
+% output:
 %   A csv file with 'filename' as the first column, and each column
 %   thereafter is the value of the one of the features specified.
 %
-% Written by Gabriel A. Nespoli 2017-04-04. Revised 2017-04-07.
+% Written by Gabriel A. Nespoli 2017-04-04. Revised 2017-10-31.
 
 % TODO add parameter 'addfeatures' that adds certain features to an existing csv file
 % TODO make a subfunction to combine the current song's data with the master list. this is needed because exiftool extracts different kinds of metadata for different filetypes (wav, mp3, m4a)
