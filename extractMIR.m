@@ -161,8 +161,8 @@ for filename = filenames
     fprintf('\nProcessing file %i/%i: %s\n', filenameInd, length(filenames), filename)
     
     % data and dataFormat will be used later with fprintf to write the csvfile
-    data = {filename, datestr(now,'yyyy-mm-dd HH:MM:SS')};
-    dataFormat = ['"%s","%s"'];
+    data = {folder, filename, datestr(now,'yyyy-mm-dd HH:MM:SS')};
+    dataFormat = '"%s","%s","%s"';
 
     % now that relative filename has been stored in the data variable and
     % the metadata has been pulled from the relative path, convert it to an
