@@ -160,14 +160,13 @@ end
 try
 
 %% loop files
-for filename = filenames
+for i = 1:length(filenames)
     tic
-    
+
     % looping admin
-    filenameInd = find(ismember(filenames,filename)); % get loop iteration
-    filename = filename{1}; % make current filename a string instead of a cell
-    fprintf('\nProcessing file %i/%i: %s\n', filenameInd, length(filenames), filename)
-    
+    filename = filename{i}; % make current filename a string instead of a cell
+    fprintf('\nProcessing file %i/%i: %s\n', i, length(filenames), filename)
+
     % data and dataFormat will be used later with fprintf to write the csvfile
     data = {folder, filename, datestr(now,'yyyy-mm-dd HH:MM:SS')};
     dataFormat = '"%s","%s","%s"';
@@ -237,9 +236,9 @@ for filename = filenames
     fprintf(fid,[dataFormat,'\n'],data{:});
 
     % save progress every so often
-    if mod(filenameInd,saveFrequency) == 0
-        progress = filenameInd / length(filenames);
-        w = mywaitbar('Saving progress...',progress,'Closing file...');
+    if mod(i,saveFrequency) == 0
+        progress = i / length(filenames);
+        w = mywaitbar('    Saving progress...',progress,'Closing file...');
         fclose(fid);
         clear a
 
