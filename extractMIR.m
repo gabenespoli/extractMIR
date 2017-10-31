@@ -175,11 +175,6 @@ for i = 1:length(filenames)
     % the metadata has been pulled from the relative path, convert it to an
     % absolute path so we can actually find the file for loading
     filename = fullfile(folder,filename);
-    [pathstr,name,ext] = fileparts(filename);
-
-    %% get metadata
-    disp('Extracting metadata...')
-    metadata = getMetadata(filename);
 
     %% load file into an MIR Toolbox object
     disp('Loading file into MIR Toolbox...')
