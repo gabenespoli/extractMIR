@@ -97,7 +97,16 @@ if exist(outputfile,'file')
 
     if ismember(lower(resp), {'a','o'}) % backup file before modifying it
         disp(['Backing up ''',outputfile,''' to ''',outputfile,'.bak','''...'])
-        [status,result] = system(['cp ',outputfile,' ',outputfile,'.bak']);
+        [status,~] = system(['cp ',outputfile,' ',outputfile,'.bak']);
+        if status
+            force = input('Warning: couldn''t backup old output file. Continue anyway? [y/n]', 's');
+            if ~strcmpi(force, 'y')
+                disp('Exiting...')
+                return
+            else
+                fprintf('Overwriting %s...', csvfile)
+            end
+        end
     end
 
     switch lower(resp)
