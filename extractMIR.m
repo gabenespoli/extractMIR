@@ -20,6 +20,10 @@ function extractMIR(csvfile, folder, varargin)
 %   'filetypes' = [string|cell of strings] File extensions to search for
 %       in all folders specified in locs. Default {'mp3','m4a','wav','aiff'}.
 %
+%   'saveFrequency' = [numeric] Number of audio files to process before 
+%       writing to the csvfile. Default 1 (after each audio file, data is 
+%       written).
+%
 %   'mirtoolboxpath' = [cell of strings|string] Paths to search for 
 %       MIR Toolbox and add it to the MATLAB path. The first match is added.
 %       Default '{'~/Documents/MATLAB/MIRtoolbox1.6.1', 
@@ -63,9 +67,10 @@ for i = 1:2:length(varargin)
     switch lower(varargin{i})
     case 'csvfile',                 csvfile = varargin{i+1};
     case 'folder',                  folder = varargin{i+1};
-    case {'filetypes','exts'},      filetypes  = varargin{i+1};
-    case 'mirtoolboxpath',          MIRtoolboxPath = varargin{i+1};
     case 'features',                features = varargin{i+1};
+    case {'filetypes','exts'},      filetypes  = varargin{i+1};
+    case 'savefrequency',           saveFrequency = varargin{i+1};
+    case 'mirtoolboxpath',          MIRtoolboxPath = varargin{i+1};
     end
 end
 
