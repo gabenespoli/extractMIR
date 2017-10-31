@@ -68,7 +68,7 @@ features = {...
 %% user-defined
 for i = 1:2:length(varargin)
     switch lower(varargin{i})
-    case {'csvfile','outputfile'},  outputfile = varargin{i+1};
+    case 'csvfile',                 csvfile = varargin{i+1};
     case 'folder',                  folder = varargin{i+1};
     case {'filetypes','exts'},      filetypes  = varargin{i+1};
     case 'mirtoolboxpath',          MIRtoolboxPath = varargin{i+1};
@@ -87,16 +87,16 @@ while ~exist(folder,'dir'),
 end
 filenames = getFilenames(folder,filetypes,'relative');
 
-if isempty(outputfile)
-    outputfile = input('Output filename (e.g., mir.csv): ','s');
+if isempty(csvfile)
+    csvfile = input('Output filename (e.g., mir.csv): ','s');
 end
 
-if exist(outputfile,'file')
-    resp = input(['File ''',outputfile,''' already exists. [a]ppend, [o]verwrite, or [c]ancel: '],'s');
+if exist(csvfile,'file')
+    resp = input(['File ''',csvfile,''' already exists. [a]ppend, [o]verwrite, or [c]ancel: '],'s');
 
     if ismember(lower(resp), {'a','o'}) % backup file before modifying it
-        disp(['Backing up ''',outputfile,''' to ''',outputfile,'.bak','''...'])
-        [status,~] = system(['cp ',outputfile,' ',outputfile,'.bak']);
+        disp(['Backing up ''',csvfile,''' to ''',csvfile,'.bak','''...'])
+        [status,~] = system(['cp ',csvfile,' ',csvfile,'.bak']);
         if status
             force = input('Warning: couldn''t backup old output file. Continue anyway? [y/n]', 's');
             if ~strcmpi(force, 'y')
@@ -112,11 +112,11 @@ if exist(outputfile,'file')
     case 'a'
         makeNewFile = false;
         try
-            completed = readtable(outputfile);
+            completed = readtable(csvfile);
             header = completed.Properties.VariableNames;
             completedFilenames = completed.filename;
         catch
-            [header,data] = readtable_fallback(outputfile);
+            [header,data] = readtable_fallback(csvfile);
             completedFilenames = data{ismember(header,'filename')};
         end
 
@@ -130,7 +130,7 @@ if exist(outputfile,'file')
         
         % open file for appending text
         % open as text file ('t') to deal with newlines on different systems
-        fid = fopen(outputfile,'at');
+        fid = fopen(csvfile,'at');
 
     case 'o'
         makeNewFile = true;
@@ -147,10 +147,10 @@ else
 end
     
 if makeNewFile
-    disp(['Creating output file ''',outputfile,'''...'])
+    disp(['Creating output file ''',csvfile,'''...'])
     % open new file and write header row
-    fid = fopen(outputfile,'wt');
-    header = {'filename','dateExtracted',features{:}};
+    fid = fopen(csvfile,'wt');
+    header = [{'filename', 'dateExtracted'}, features];
     headerFormat = [repmat('%s,',1,length(header)-1), '%s\n'];
     fprintf(fid,headerFormat,header{:});
 end
@@ -244,7 +244,7 @@ for filename = filenames
         clear a
 
         w = mywaitbar(w,progress,'Reopening file...');
-        fid = fopen(outputfile,'at');
+        fid = fopen(csvfile,'at');
 
         mywaitbar(w,-1);
     end
