@@ -1,4 +1,4 @@
-function extractMIR(varargin)
+function extractMIR(csvfile, folder, varargin)
 %extractMIR  Extract features from wav files.
 % usage:
 %   extractMIR(csvfile, folder, 'key', val, ...)
@@ -35,8 +35,6 @@ function extractMIR(varargin)
 % TODO make a subfunction to combine the current song's data with the master list. this is needed because exiftool extracts different kinds of metadata for different filetypes (wav, mp3, m4a)
 
 %% defaults
-folder = 'Music';
-outputfile = ''; % enter '' to not write to file
 filetypes = {'mp3','m4a','wav','aiff'};
 MIRtoolboxPath = {'~/Documents/MATLAB/MIRtoolbox1.6.1', '~/bin/matlab/MIRtoolbox1.6.1'};
 saveFrequency = 1; % save every x number of files
