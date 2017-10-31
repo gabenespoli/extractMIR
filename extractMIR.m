@@ -265,7 +265,6 @@ end
 
 %% close output file
 fclose(fid);
-disp(['Extracted features from ',num2str(length(files)),' file(s).'])
 fprintf('Extracted features from %i file(s).', length(filenames))
 
 end
