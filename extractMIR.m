@@ -166,7 +166,7 @@ for i = 1:length(filenames)
     fprintf('\nProcessing file %i/%i: %s\n', i, length(filenames), filename)
 
     % data and dataFormat will be used later with fprintf to write the csvfile
-    data = {folder, filename, datestr(now,'yyyy-mm-dd HH:MM:SS')};
+    data = {folder, filename, datestr(now,'yyyy-mm-dd_HH:MM:SS')};
     dataFormat = '"%s","%s","%s"';
 
     % now that relative filename has been stored in the data variable and
