@@ -234,7 +234,7 @@ for i = 1:length(filenames)
     % save progress every so often
     if mod(i,saveFrequency) == 0
         progress = i / length(filenames);
-        w = mywaitbar('    Saving progress...',progress,'Closing file...');
+        w = mywaitbar('Saving progress...    ',progress,'Closing file...');
         fclose(fid);
         clear a
 
