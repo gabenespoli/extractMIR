@@ -162,7 +162,7 @@ for i = 1:length(filenames)
     tic
 
     % looping admin
-    filename = filename{i}; % make current filename a string instead of a cell
+    filename = filenames{i}; % make current filename a string instead of a cell
     fprintf('\nProcessing file %i/%i: %s\n', i, length(filenames), filename)
 
     % data and dataFormat will be used later with fprintf to write the csvfile
