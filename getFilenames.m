@@ -60,7 +60,7 @@ for iLoc = 1:length(locs)
                     temp = cellfun(@(x) strrep(x,[loc,'/'],''),temp,'UniformOutput',false);
                     temp = cellfun(@(x) strrep(x,loc,''),temp,'UniformOutput',false);
                 elseif ~strcmp(pathtype,'absolute')
-                    error('Invalid pathtype for getfilenames.m.')
+                    error('Invalid pathtype for getFilenames.m.')
                 end
                 
                 filenames = [filenames temp];
