@@ -85,73 +85,7 @@ while ~exist(folder,'dir'),
 end
 filenames = getFilenames(folder,filetypes,'relative');
 
-if isempty(csvfile)
-    csvfile = input('Output filename (e.g., mir.csv): ','s');
-end
-
-if exist(csvfile,'file')
-    resp = input(['File ''',csvfile,''' already exists. [a]ppend, [o]verwrite, or [c]ancel: '],'s');
-
-    if ismember(lower(resp), {'a','o'}) % backup file before modifying it
-        disp(['Backing up ''',csvfile,''' to ''',csvfile,'.bak','''...'])
-        [status,~] = system(['cp ',csvfile,' ',csvfile,'.bak']);
-        if status
-            force = input('Warning: couldn''t backup old output file. Continue anyway? [y/n]', 's');
-            if ~strcmpi(force, 'y')
-                disp('Exiting...')
-                return
-            else
-                fprintf('Overwriting %s...', csvfile)
-            end
-        end
-    end
-
-    switch lower(resp)
-    case 'a'
-        makeNewFile = false;
-        try
-            completed = readtable(csvfile);
-            header = completed.Properties.VariableNames;
-            completedFilenames = completed.filename;
-        catch
-            [header,data] = readtable_fallback(csvfile);
-            completedFilenames = data{ismember(header,'filename')};
-        end
-
-         % must extract same features as file
-         features = header(3:end);
-        
-        % remove filenames that have already been completed
-        if ~isempty(completedFilenames)
-            filenames = filenames(~ismember(filenames,completedFilenames));
-        end
-        
-        % open file for appending text
-        % open as text file ('t') to deal with newlines on different systems
-        fid = fopen(csvfile,'at');
-
-    case 'o'
-        makeNewFile = true;
-
-    otherwise
-        disp('Invalid entry. Aborting...')
-        return
-
-    end
-
-else 
-    makeNewFile = true;
-
-end
-    
-if makeNewFile
-    disp(['Creating output file ''',csvfile,'''...'])
-    % open new file and write header row
-    fid = fopen(csvfile,'wt');
-    header = [{'filename', 'dateExtracted'}, features];
-    headerFormat = [repmat('%s,',1,length(header)-1), '%s\n'];
-    fprintf(fid,headerFormat,header{:});
-end
+[csvfile, fid, filenames] = getcsvfile(csvfile, filenames);
 
 %% big try catch block because this is going to take a while
 % this lets us exit gracefully (bascially to properly close the csv file)
@@ -270,4 +204,77 @@ for i = 1:length(MIRtoolboxPath)
         return
     end
 end
+end
+
+function [csvfile, fid, filenames] = getcsvfile(csvfile, filenames)
+
+if isempty(csvfile)
+    csvfile = input('Output filename (e.g., mir.csv): ','s');
+end
+
+if exist(csvfile,'file')
+    resp = input(['File ''',csvfile,''' already exists. [a]ppend, ', ...
+                  'more data to it, [o]verwrite, or [c]ancel: '],'s');
+
+    if ismember(lower(resp), {'a','o'}) % backup file before modifying it
+        disp(['Backing up ''',csvfile,''' to ''',csvfile,'.bak','''...'])
+        [status,~] = system(['cp ',csvfile,' ',csvfile,'.bak']);
+        if status
+            force = input('Warning: couldn''t backup old output file. Continue anyway? [y/n]', 's');
+            if ~strcmpi(force, 'y')
+                disp('Exiting...')
+                return
+            else
+                fprintf('Overwriting %s...', csvfile)
+            end
+        end
+    end
+
+    switch lower(resp)
+    case 'a'
+        makeNewFile = false;
+        try
+            completed = readtable(csvfile);
+            header = completed.Properties.VariableNames;
+            completedFilenames = completed.filename;
+        catch
+            [header,data] = readtable_fallback(csvfile);
+            completedFilenames = data{ismember(header,'filename')};
+        end
+
+         % must extract same features as file
+         features = header(3:end);
+        
+        % remove filenames that have already been completed
+        if ~isempty(completedFilenames)
+            filenames = filenames(~ismember(filenames,completedFilenames));
+        end
+        
+        % open file for appending text
+        % open as text file ('t') to deal with newlines on different systems
+        fid = fopen(csvfile,'at');
+
+    case 'o'
+        makeNewFile = true;
+
+    otherwise
+        disp('Invalid entry. Aborting...')
+        return
+
+    end
+
+else 
+    makeNewFile = true;
+
+end
+    
+if makeNewFile
+    disp(['Creating output file ''',csvfile,'''...'])
+    % open new file and write header row
+    fid = fopen(csvfile,'wt');
+    header = [{'filename', 'dateExtracted'}, features];
+    headerFormat = [repmat('%s,',1,length(header)-1), '%s\n'];
+    fprintf(fid,headerFormat,header{:});
+end
+
 end
