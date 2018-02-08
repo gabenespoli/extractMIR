@@ -2,6 +2,10 @@
 
 extractMIR is a MATLAB script for calculating MIR (music information retrieval) features from many audio files and saving them to a csv file. It is basically a wrapper for MIR Toolbox for extracting many features from a folder of files. An existing csv file can be specified, in which case extractMIR will get the feature list from this csv file, and will not re-extract features from files that are already in the file.
 
+## Usage
+
+`extractMIR('file.csv', 'folder/of/music/files')`
+
 ## Dependencies
 
 - [MATLAB](http://www.mathworks.com/)
