@@ -30,19 +30,19 @@ if nargin < 3 || isempty(pathtype), pathtype = 'absolute'; end
 if nargin < 4 || isempty(ignoredotfiles), ignoredotfiles = true; end
 filenames = {};
 
-for loc = locs
-    loc = loc{1};
+for iLoc = 1:length(locs)
+    loc = locs{iLoc};
 
     if isdir(loc)
         loc = getAbsolutePath(loc);
         subfolders = genpath(loc);
         subfolders = regexp(subfolders,pathsep,'split');
 
-        for subfolder = subfolders
-            subfolder = subfolder{1};
+        for iSub = 1:length(subfolders)
+            subfolder = subfolders{iSub};
             
-            for ext = exts
-                ext = ext{1};
+            for iExt = 1:length(exts)
+                ext = exts{iExt};
                 temp = dir(fullfile(subfolder,['*.',ext])); % get filenames in folder
                 if size(temp,1) == 0, continue, end % abort if no files found
                 temp = {temp.name};
@@ -72,10 +72,3 @@ for loc = locs
 end
 end
 
-function folder = getAbsolutePath(folder)
-currentDir = pwd;
-if ~isempty(folder), cd(folder), end
-absolutePath = pwd;
-if ~isempty(folder), cd(currentDir), end
-folder = absolutePath;
-end
