@@ -21,7 +21,7 @@ function extractMIR(csvfile, folder, varargin)
 %       in all folders specified in locs. Default {'mp3','m4a','wav','aiff'}.
 %
 %   'saveFrequency' = [numeric] Number of audio files to process before 
-%       writing to the csvfile. Default 1 (after each audio file, data is 
+%       writing to the csvfile. Default 1 (after each audio file, data are
 %       written).
 %
 %   'mirtoolboxpath' = [cell of strings|string] Paths to search for 
@@ -79,13 +79,14 @@ addMIRtoolboxPath(MIRtoolboxPath)
 mirwaitbar(0); % turn off mir toolbox's waitbar
 mirverbose(0); % stop mir toolbox from printing to the command window
 features = cellstr(features); % make sure input is a cell array
-while ~exist(folder,'dir'), 
+[~, computer] = system('hostname'); computer = strtrim(computer);
+while ~exist(folder,'dir') 
     disp(['The folder ''',folder,''' doesn''t exist.'])
     folder = input('Folder (e.g., ~/Music): ','s');
 end
 filenames = getFilenames(folder,filetypes,'relative');
-
-[csvfile, fid, filenames] = getcsvfile(csvfile, filenames);
+folder = getAbsolutePath(folder);
+[csvfile, fid, filenames] = getcsvfile(csvfile, filenames, features);
 
 %% big try catch block because this is going to take a while
 % this lets us exit gracefully (bascially to properly close the csv file)
@@ -99,14 +100,13 @@ for i = 1:length(filenames)
     filename = filenames{i}; % make current filename a string instead of a cell
     fprintf('\nProcessing file %i/%i: %s\n', i, length(filenames), filename)
 
-    % data and dataFormat will be used later with fprintf to write the csvfile
-    data = {folder, filename, datestr(now,'yyyy-mm-dd_HH:MM:SS')};
-    dataFormat = '"%s","%s","%s"';
-
-    % now that relative filename has been stored in the data variable and
-    % the metadata has been pulled from the relative path, convert it to an
-    % absolute path so we can actually find the file for loading
+    % get relevant filename parts
+    [subfolder,name,ext] = fileparts(filename);
     filename = fullfile(folder,filename);
+
+    % data and dataFormat will be used later with fprintf to write the csvfile
+    data = {computer, folder, subfolder, [name,ext], datestr(now,'yyyy-mm-dd_HH:MM:SS')};
+    dataFormat = '"%s","%s","%s","%s","%s"';
 
     %% load file into an MIR Toolbox object
     disp('Loading file into MIR Toolbox...')
@@ -116,25 +116,26 @@ for i = 1:length(filenames)
 
     %% loop features
     w = mywaitbar('Extracting features...');
-    for feature = features
+    nFeatures = length(features);
+    for j = 1:nFeatures
 
-        featureInd = find(ismember(features,feature));
-        feature = feature{1}; % make string instead of cell
+        feature = features{j}; % make string instead of cell
         [featureName,f] = parseFeature(feature,Fs); % get feature settings from name
         if ~isempty(f) % filter
             if mirverbose
-                w = mywaitbar(w,featureInd/length(features),'filtering\n');
+                w = mywaitbar(w,j/nFeatures,'filtering\n');
             else
-                w = mywaitbar(w,featureInd/length(features),'filtering');
+                w = mywaitbar(w,j/nFeatures,'filtering');
             end
             a = mirfilterbank(a,'Manual',f);
         end
 
         if mirverbose
-            w = mywaitbar(w,featureInd/length(features),[feature,'\n']);
+            w = mywaitbar(w,j/nFeatures,[feature,'\n']);
         else
-            w = mywaitbar(w,featureInd/length(features),feature);
+            w = mywaitbar(w,j/nFeatures,feature);
         end
+
         switch lower(featureName)
 
             % mir features
@@ -192,7 +193,7 @@ end
 
 %% close output file
 fclose(fid);
-fprintf('Extracted features from %i file(s).', length(filenames))
+fprintf('Extracted features from %i file(s).\n', length(filenames))
 
 end
 
@@ -206,7 +207,7 @@ for i = 1:length(MIRtoolboxPath)
 end
 end
 
-function [csvfile, fid, filenames] = getcsvfile(csvfile, filenames)
+function [csvfile, fid, filenames] = getcsvfile(csvfile, filenames, features)
 
 if isempty(csvfile)
     csvfile = input('Output filename (e.g., mir.csv): ','s');
@@ -217,12 +218,17 @@ if exist(csvfile,'file')
                   'more data to it, [o]verwrite, or [c]ancel: '],'s');
 
     if ismember(lower(resp), {'a','o'}) % backup file before modifying it
-        disp(['Backing up ''',csvfile,''' to ''',csvfile,'.bak','''...'])
-        [status,~] = system(['cp ',csvfile,' ',csvfile,'.bak']);
-        if status
+        [pathstr, name, ext] = fileparts(csvfile);
+        csvfile_bak = fullfile(pathstr, [name, '_bak', ext]);
+        fprintf('Backing up ''%s'' to ''%s''... ', csvfile, csvfile_bak)
+        success = copyfile(csvfile, csvfile_bak);
+        if success
+            fprintf('Done.\n')
+        else
+            fprintf('Failed.\n')
             force = input('Warning: couldn''t backup old output file. Continue anyway? [y/n]', 's');
             if ~strcmpi(force, 'y')
-                disp('Exiting...')
+                fprintf('Exiting...\n')
                 return
             else
                 fprintf('Overwriting %s...', csvfile)
@@ -272,7 +278,7 @@ if makeNewFile
     disp(['Creating output file ''',csvfile,'''...'])
     % open new file and write header row
     fid = fopen(csvfile,'wt');
-    header = [{'filename', 'dateExtracted'}, features];
+    header = [{'computer', 'folder', 'subfolder', 'filename', 'dateExtracted'}, features];
     headerFormat = [repmat('%s,',1,length(header)-1), '%s\n'];
     fprintf(fid,headerFormat,header{:});
 end
